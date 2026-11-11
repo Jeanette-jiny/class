@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f4ef">
+  <title>人大校园 · 压力回血盲盒</title>
+  <style>
+    :root { --ink:#26352d; --muted:#718077; --green:#47745b; --green-dark:#31583f; --cream:#f5f4ef; --card:#fffefa; --line:#e6e9df; --orange:#d58a55; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { min-height:100vh; padding:28px 16px; display:flex; justify-content:center; align-items:center; color:var(--ink); background:radial-gradient(circle at 10% 8%,#e8eee1 0,transparent 32%),radial-gradient(circle at 90% 90%,#f1e5d6 0,transparent 30%),var(--cream); font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .app { width:min(100%,560px); }
+    .eyebrow { color:var(--green); font-size:12px; font-weight:750; letter-spacing:.16em; text-align:center; margin-bottom:9px; }
+    h1 { text-align:center; font-size:clamp(25px,6vw,34px); line-height:1.2; letter-spacing:.02em; }
+    .subtitle { color:var(--muted); text-align:center; font-size:14px; margin:10px auto 22px; max-width:440px; line-height:1.7; }
+    .panel { padding:18px; border:1px solid rgba(255,255,255,.8); border-radius:25px; background:rgba(255,255,255,.72); box-shadow:0 18px 55px rgba(48,66,49,.11); backdrop-filter:blur(12px); }
+    .tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; padding:5px; border-radius:16px; background:#edf0e9; margin-bottom:15px; }
+    .tab { border:0; border-radius:12px; padding:10px 3px; color:#718077; background:transparent; cursor:pointer; font-size:12px; font-weight:700; transition:.2s; }
+    .tab span { display:block; font-size:17px; margin-bottom:3px; }
+    .tab.active { color:white; background:var(--green); box-shadow:0 4px 12px #47745b40; }
+    .range-note { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:0 3px 12px; color:var(--muted); font-size:12px; }
+    .range-note strong { color:var(--green-dark); font-size:13px; }
+    .card { min-height:330px; padding:22px; display:flex; flex-direction:column; background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:0 8px 22px #253d2b0d; transition:transform .18s ease,opacity .18s ease; }
+    .placeholder { flex:1; min-height:280px; display:grid; place-content:center; text-align:center; color:var(--muted); line-height:1.8; }
+    .placeholder .box { font-size:48px; margin-bottom:8px; }
+    .placeholder strong { display:block; color:var(--ink); font-size:17px; }
+    .card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:17px; }
+    .tag { color:#fff; background:var(--green); border-radius:99px; padding:5px 11px; font-weight:750; font-size:11px; }
+    .odds { color:var(--muted); background:#f1f2ed; border-radius:99px; padding:5px 9px; font-size:11px; }
+    .name { font-size:21px; line-height:1.4; margin-bottom:11px; color:#26372d; }
+    .desc { color:#526157; background:#f4f6f0; border-left:3px solid #83a17f; padding:12px 13px; border-radius:8px 12px 12px 8px; font-size:14px; line-height:1.75; margin-bottom:14px; }
+    .details { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:auto; }
+    .detail { border:1px solid #eceee8; border-radius:12px; padding:11px; font-size:12px; line-height:1.65; color:#647067; }
+    .detail b { display:block; color:var(--green-dark); margin-bottom:4px; font-size:12px; }
+    .draw { width:100%; border:0; border-radius:15px; padding:15px 20px; margin-top:15px; color:white; font-size:15px; font-weight:800; letter-spacing:.04em; background:linear-gradient(135deg,#548063,#31583f); box-shadow:0 7px 17px #31583f35; cursor:pointer; transition:transform .15s,filter .15s; }
+    .draw:hover { filter:brightness(1.06); transform:translateY(-1px); }
+    .draw:active { transform:scale(.985); }
+    .foot { color:#829086; display:flex; justify-content:space-between; gap:8px; font-size:11px; padding:13px 4px 0; }
+    .note { text-align:center; color:#8a938b; font-size:11px; margin-top:13px; line-height:1.6; }
+    .toolbar { display:flex; justify-content:center; margin:0 auto 13px; }
+    .manage-link { border:1px solid #dce4d9; color:var(--green-dark); background:#ffffffa8; border-radius:99px; padding:8px 15px; font-size:12px; font-weight:700; cursor:pointer; }
+    .manage-link:hover { background:#fff; }
+    .view[hidden] { display:none; }
+    .manage-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:15px; }
+    .manage-head h2 { font-size:19px; }
+    .back-link { border:0; background:transparent; color:var(--green); font-weight:750; cursor:pointer; padding:8px 0; }
+    .form { display:grid; gap:12px; }
+    .field { display:grid; gap:6px; text-align:left; }
+    .field label { color:#526157; font-size:12px; font-weight:750; }
+    .field input,.field textarea,.field select { width:100%; border:1px solid #dfe5dc; border-radius:11px; background:#fff; padding:11px 12px; color:var(--ink); font:inherit; font-size:14px; outline:none; }
+    .field input:focus,.field textarea:focus,.field select:focus { border-color:#78a082; box-shadow:0 0 0 3px #47745b18; }
+    .field textarea { min-height:78px; resize:vertical; line-height:1.55; }
+    .form .draw { margin-top:2px; }
+    .saved-list { margin-top:20px; border-top:1px solid var(--line); padding-top:15px; }
+    .saved-list h3 { font-size:14px; margin-bottom:9px; }
+    .saved-empty { color:var(--muted); font-size:12px; }
+    .saved-item { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid #edf0e9; text-align:left; }
+    .saved-item strong { display:block; font-size:13px; line-height:1.5; }
+    .saved-item small { display:block; margin-top:3px; color:var(--muted); font-size:11px; }
+    .delete-item { flex:none; border:0; background:#f8ece8; color:#a2523e; border-radius:8px; padding:6px 9px; cursor:pointer; font-size:11px; }
+    .toast { min-height:18px; color:var(--green-dark); font-size:12px; text-align:center; }
+    @media(max-width:420px) { .panel{padding:13px}.tab{font-size:10px}.card{padding:17px;min-height:350px}.name{font-size:19px}.detail{padding:9px;font-size:11px}.foot{font-size:10px} }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after{scroll-behavior:auto!important;transition:none!important} }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="eyebrow">RENMIN UNIVERSITY · CAMPUS EDITION</div>
+    <h1>🎓 压力回血盲盒</h1>
+    <p class="subtitle">忙里偷闲也算休息。按你现在能腾出的时间，抽一个人大校园里的小放松。</p>
+    <div class="toolbar" id="homeToolbar"><button class="manage-link" id="openManager">＋ 添加自己的放松选项</button></div>
+    <section class="panel view" id="homeView" aria-label="解压盲盒">
+      <div class="tabs" role="tablist" aria-label="选择可用时间">
+        <button class="tab active" role="tab" aria-selected="true" data-pool="sec"><span>⚡</span>秒级</button>
+        <button class="tab" role="tab" aria-selected="false" data-pool="min"><span>⏱️</span>分钟级</button>
+        <button class="tab" role="tab" aria-selected="false" data-pool="ten"><span>🌿</span>十分钟级</button>
+        <button class="tab" role="tab" aria-selected="false" data-pool="long"><span>☀️</span>1–2小时</button>
+      </div>
+      <div class="range-note"><strong id="rangeTitle">⚡ 0–60秒</strong></div>
+      <article class="card" id="card" aria-live="polite">
+        <div class="placeholder" id="content"><div><div class="box">🎁</div><strong>准备好给自己一点喘息了吗？</strong><span>选好时间档，点击下方开盲盒</span></div></div>
+      </article>
+      <button class="draw" id="drawButton">🎲 抽取一个解压方式</button>
+      <div class="foot"><span>📍 中国人民大学校园生活灵感</span><span id="drawCount">已抽取 0 次</span></div>
+    </section>
+    <section class="panel view" id="manageView" hidden aria-label="添加放松选项">
+      <div class="manage-head"><h2>添加一个放松选项</h2><button class="back-link" id="backHome">← 返回盲盒</button></div>
+      <form class="form" id="optionForm">
+        <div class="field"><label for="optionPool">放进哪个时间档</label><select id="optionPool" required><option value="sec">⚡ 秒级（0–60秒）</option><option value="min">⏱️ 分钟级（1–10分钟）</option><option value="ten">🌿 十分钟级（10–30分钟）</option><option value="long">☀️ 1–2小时级</option></select></div>
+        <div class="field"><label for="optionName">选项名称</label><input id="optionName" maxlength="50" placeholder="例如：去静园水果店买份水果" required></div>
+        <div class="field"><label for="optionDesc">怎么做</label><textarea id="optionDesc" maxlength="240" placeholder="简单描述具体做法" required></textarea></div>
+        <div class="field"><label for="optionTime">需要多久</label><input id="optionTime" maxlength="30" placeholder="例如：约15分钟" required></div>
+        <div class="field"><label for="optionMoney">大约花费</label><input id="optionMoney" maxlength="40" placeholder="例如：0元 / 约10–20元" required></div>
+        <div class="field"><label for="optionEffect">放松在哪里</label><textarea id="optionEffect" maxlength="180" placeholder="写清它能带来的实际放松感" required></textarea></div>
+        <button class="draw" type="submit">保存并加入盲盒</button>
+        <div class="toast" id="formToast" role="status"></div>
+      </form>
+      <div class="saved-list"><h3>我添加的选项</h3><div id="savedOptions" class="saved-empty">还没有自定义选项</div></div>
+    </section>
+    <p class="note">抽到不合适的可以再抽一次；休息方式按自己的身体状况和实际安排选择。</p>
+  </main>
+  <script>
+    const data = [
+      {pool:'sec',name:'图书馆楼梯间“原地5个深蹲”',desc:'在工位或楼梯间不挡路的角落站起来，做5个深蹲。',time:'约30秒',money:'0元',effect:'短暂活动身体，打断久坐和持续用脑的状态。'},
+      {pool:'sec',name:'盯着立德楼窗外的红绿灯数3个数',desc:'在上课或自习间隙，看看窗外红绿灯的变化，数三个数，暂时不想DDL和绩点。',time:'约45秒',money:'0元',effect:'把注意力从书本或屏幕移开，短暂放松眼睛和注意力。'},
+      {pool:'sec',name:'发一条状态，配上奶蛙表情包',desc:'编辑一条仅自己可见或特定分组可见的朋友圈/状态，配上一个贴合此刻心情的奶蛙表情包。',time:'约10秒',money:'0元',effect:'用轻松的方式表达情绪，给自己一个短暂的情绪出口。'},
+      {pool:'sec',name:'洗手间用凉水冲手腕15秒',desc:'去最近的洗手间，用凉水冲洗手腕内侧约15秒。',time:'约15秒',money:'0元',effect:'借助凉水的触感把注意力带回当下，适合短暂缓一缓。'},
+      {pool:'sec',name:'课桌下“脚趾抓地放松”',desc:'坐着时脚趾轻轻抓地5秒，再松开5秒，重复3轮。',time:'约30秒',money:'0元',effect:'把注意力从脑内反复担忧转到身体感受，也能活动一下久坐时紧绷的双脚。'},
+      {pool:'sec',name:'窗边“看远处三样东西”',desc:'抬头找出远处三个物体，依次留意它们的颜色或形状。',time:'约20秒',money:'0元',effect:'暂时离开屏幕和书本，转换视觉焦点，让眼睛和注意力歇一口气。'},
+
+      {pool:'min',name:'下楼找一只校园小猫并陪它玩十分钟',desc:'在校园林荫道或宿舍楼下遇到小猫时，先保持距离观察；如果猫愿意靠近，再轻轻互动。',time:'约10分钟',money:'0元',effect:'短暂离开学习环境，感受和动物相处带来的轻松时刻。'},
+      {pool:'min',name:'从图书馆窗户看10分钟北园足球场球赛',desc:'学累了抬头看看北园足球场，留意场上球员的跑动和传球。',time:'约10分钟',money:'0元',effect:'转换注意内容，暂时从室内学习和任务思绪中抽离。'},
+      {pool:'min',name:'去食堂买个小吃或糖水，慢慢吃完',desc:'课间或饭后去食堂买一份小吃或糖水，找个座位坐下来吃完。',time:'约5–8分钟',money:'约5–12元',effect:'离开学习位置，补充食物和水分，给自己一个短暂的休息段。'},
+      {pool:'min',name:'直奔瑞幸“喝一杯冰美式”',desc:'课间去瑞幸买一杯自己平时会喝的饮品，找个地方坐下或边走边喝。晚上可以选无咖啡因饮品。',time:'约5分钟',money:'约9.9–18元',effect:'通过短暂离开原来的环境、喝点饮品，给自己一个转场休息。'},
+      {pool:'min',name:'八百米操场“暴走一圈半”',desc:'去人大田径场，按自己的节奏快走一圈半；不需要跑，也不必追求速度。',time:'约5分钟',money:'0元',effect:'从久坐中起身活动，转换一下身体状态和注意力。'},
+      {pool:'min',name:'撕一张废草稿纸并投进垃圾桶',desc:'找一张废草稿纸撕成几块，揉成纸团，试着投进垃圾桶；记得最后把纸屑收好。',time:'约2分钟',money:'0元',effect:'用一个简单的动手活动打断紧绷状态，也给自己一个轻松的小挑战。'},
+      {pool:'min',name:'静园水果店“买一份当季水果”',desc:'去静园水果店挑一份预算内的水果，找个座位慢慢吃。',time:'约5–10分钟',money:'约5–15元',effect:'离开学习位置，补充一点食物和水分，给自己一个短暂的休息段。'},
+      {pool:'min',name:'校园“无目的绕楼一圈”',desc:'选教学楼或宿舍附近一条不赶路的路线，走一圈再回来，不用刷手机。',time:'约5–8分钟',money:'0元',effect:'从久坐中起身活动、换换环境，让持续用脑有一个短暂间隙。'},
+
+      {pool:'ten',name:'“不聊正事”的食堂搭子时间',desc:'约同学去食堂吃点东西，给这顿饭定个小规矩：前十分钟不聊论文、实习、考试和DDL。',time:'约15–25分钟',money:'约5–25元',effect:'吃饭时暂时从任务话题里抽离，也保留同学间自然聊天的时间。'},
+      {pool:'ten',name:'到操场走一圈，路上不看手机',desc:'去操场慢走一圈，看看场上有没有人在打球；碰上熟人就打个招呼，没有也没关系。',time:'约15–20分钟',money:'0元',effect:'活动一下久坐的身体，离开室内和屏幕一会儿。'},
+      {pool:'ten',name:'瑞幸买杯喝的，坐到喝完再走',desc:'买一杯自己平时会点的饮品，找个位置坐十几分钟，不顺手打开电脑处理任务。晚上可以选无咖啡因饮品。',time:'约15–25分钟',money:'约10–25元',effect:'把“继续赶路”切换成一段有边界的休息。'},
+      {pool:'ten',name:'听完一张短歌单',desc:'找个不影响他人的地方，戴耳机听几首歌，听完就起身回去，不一边听一边刷课程群。',time:'约10–20分钟',money:'0元',effect:'暂时减少消息和任务输入，让注意力从学习内容里退出来一会儿。'},
+      {pool:'ten',name:'约同学打几局乒乓球或羽毛球',desc:'找同学在校园里打一会儿球，不计分也不约长场，时间到了就收拍回去。',time:'约15–30分钟',money:'约0–10元，视场地和器材而定',effect:'从久坐中活动一下，也能通过轻松的同伴互动换换心情。'},
+      {pool:'ten',name:'校园“拍三张今天还不错的东西”',desc:'在校园里慢慢走一小段，拍三张自己觉得还不错的东西，比如树影、猫、晚霞或一杯饮料；不发朋友圈也可以。',time:'约10–20分钟',money:'0元',effect:'把注意力从待办事项移到周围环境，给自己一个轻量的观察任务。'},
+      {pool:'ten',name:'找个地方晒会儿太阳',desc:'找个不挡路、有座位的地方坐一会儿，晒太阳、发发呆或看看路过的人，时间到了再回去。',time:'约10–20分钟',money:'0元',effect:'离开室内和屏幕，给自己一段没有任务要求的休息时间。'},
+      {pool:'ten',name:'去静园水果店买水果，再坐着吃',desc:'挑一份水果，找个座位慢慢吃完，不边吃边回消息。',time:'约15–25分钟',money:'约5–20元',effect:'离开学习位置，补充食物，也给注意力一个明确的休息段。'},
+
+      {pool:'long',name:'和同学去校门附近吃顿饭，再散步回来',desc:'约一个熟悉的同学去常吃的小店，吃完慢慢走回校园；不用专门找网红店。',time:'约1–2小时',money:'约20–60元',effect:'换个地方吃饭、和熟悉的人相处，给一天留一段完整的暂停。'},
+      {pool:'long',name:'宿舍“外卖到手，认真看一集”',desc:'点一顿自己喜欢的饭，选一集时长合适的剧或综艺，吃饭时不同时开着课程群和文档。',time:'约1–1.5小时',money:'约20–50元',effect:'把注意力从多个待办里收回来，踏实休息一会儿。'},
+      {pool:'long',name:'去操场打球，结束后回宿舍洗个澡',desc:'找同学打一会儿羽毛球、篮球或乒乓球，按平时的强度玩，结束后回宿舍洗澡换衣服。',time:'约1–2小时',money:'约0–30元，视场地和装备而定',effect:'离开学习场景，活动身体；洗澡换衣服也能让休息和学习之间有个清楚的切换。'},
+      {pool:'long',name:'去常去的店坐一会儿，做点不赶进度的事',desc:'去熟悉的咖啡店、书店或校园公共空间，听歌、翻闲书、写几行随手记；不把它变成“顺便完成一项任务”。',time:'约1–2小时',money:'约0–40元',effect:'换一个舒服的环境，做不以产出为目标的事，让自己从“必须完成”的节奏里暂时出来。'},
+      {pool:'long',name:'在宿舍和室友一起做顿简单的饭',desc:'和室友去超市或便利店买些食材，回来一起准备一顿简单的饭，边做边聊；煮面或做简餐也可以。',time:'约1–2小时',money:'约15–40元/人',effect:'用一件具体、节奏不快的日常小事替换学习任务，也有机会和室友一起放松。'},
+      {pool:'long',name:'去校外逛书店或商场，给自己一段闲逛时间',desc:'挑一个附近方便到达的书店或商场，慢慢逛一圈，可以只看不买，提前留出往返时间。',time:'约1–2小时',money:'约0–50元，视交通和消费而定',effect:'换个环境、看看平时不常留意的东西，让注意力暂时离开课程和待办。'},
+      {pool:'long',name:'和朋友约一场桌游或轻松的合作游戏',desc:'约几位朋友玩一到两小时桌游或合作游戏，选规则熟悉、输赢压力小的，不临时开一场高强度竞技。',time:'约1–2小时',money:'约0–50元，视地点和消费而定',effect:'让注意力投入到共同活动中，也能获得与朋友相处的时间。'},
+      {pool:'long',name:'在校园里慢走，顺路聊聊天',desc:'约同学在校园里走一段熟悉路线，想聊天就聊近况，不想说话也可以并排走。',time:'约1–1.5小时',money:'0元',effect:'活动身体、离开室内，也给交流和放空都留出空间。'},
+      {pool:'long',name:'回宿舍补觉，醒来后慢慢收拾自己',desc:'把手机调成免打扰，设好闹钟，睡一会儿；醒来后洗漱、喝水或吃点东西，不马上接着刷消息。',time:'约1–2小时',money:'0元',effect:'适合确实缺觉或疲惫的时候，把休息优先留给身体。'},
+      {pool:'long',name:'找朋友看一场电影',desc:'约朋友去看一场时长合适的电影，算上往返和入场时间控制在两小时左右。',time:'约1.5–2小时',money:'约30–80元',effect:'暂时把注意力交给一个完整的故事，也有一段轻松的同伴时间。'}
+    ];
+
+    const pools = {
+      sec:{title:'⚡ 0–60秒',label:'秒级'},
+      min:{title:'⏱️ 1–10分钟',label:'分钟级'},
+      ten:{title:'🌿 10–30分钟',label:'十分钟级'},
+      long:{title:'☀️ 1–2小时',label:'1–2小时级'}
+    };
+    const STORAGE_KEY='ruc_stress_blindbox_custom_v1';
+    let customData=[];
+    try { customData=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); if(!Array.isArray(customData)) customData=[]; } catch { customData=[]; }
+    let currentPool='sec', draws=0, lastName='';
+    const content=document.getElementById('content');
+    const card=document.getElementById('card');
+    function setPool(pool) {
+      currentPool=pool;
+      document.querySelectorAll('.tab').forEach(btn=>{
+        const active=btn.dataset.pool===pool;
+        btn.classList.toggle('active',active);
+        btn.setAttribute('aria-selected',String(active));
+      });
+      document.getElementById('rangeTitle').textContent=pools[pool].title;
+    }
+    function draw() {
+      const choices=[...data,...customData].filter(x=>x.pool===currentPool);
+      let options=choices.filter(x=>x.name!==lastName);
+      if(!options.length) options=choices;
+      const item=options[Math.floor(Math.random()*options.length)];
+      lastName=item.name; draws++;
+      document.getElementById('drawCount').textContent=`已抽取 ${draws} 次`;
+      card.style.transform='scale(.985)'; card.style.opacity='.65';
+      window.setTimeout(()=>{
+        content.className='';
+        content.innerHTML=`
+          <div class="card-top"><span class="tag">${pools[item.pool].label}</span><span class="odds">本档随机抽取</span></div>
+          <h2 class="name">✨ ${item.name}</h2>
+          <div class="desc"><b>怎么做：</b>${item.desc}</div>
+          <div class="details">
+            <div class="detail"><b>⏳ 时间与花费</b>时间：${item.time}<br>经济：${item.money}</div>
+            <div class="detail"><b>🍃 放松在哪里</b>${item.effect}</div>
+          </div>`;
+        card.style.transform='scale(1)'; card.style.opacity='1';
+      },130);
+    }
+    document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>setPool(btn.dataset.pool)));
+    document.getElementById('drawButton').addEventListener('click',draw);
+    const homeView=document.getElementById('homeView'), manageView=document.getElementById('manageView');
+    function showManager(show) {
+      homeView.hidden=show; manageView.hidden=!show;
+      document.getElementById('homeToolbar').hidden=show;
+      document.querySelector('.note').hidden=show;
+      if(show) renderCustomOptions();
+    }
+    function persistCustom() { localStorage.setItem(STORAGE_KEY,JSON.stringify(customData)); }
+    function renderCustomOptions() {
+      const root=document.getElementById('savedOptions');
+      if(!customData.length) { root.className='saved-empty'; root.textContent='还没有自定义选项'; return; }
+      root.className=''; root.innerHTML='';
+      customData.forEach(item=>{
+        const row=document.createElement('div'); row.className='saved-item';
+        const copy=document.createElement('div');
+        const title=document.createElement('strong'); title.textContent=item.name;
+        const meta=document.createElement('small'); meta.textContent=`${pools[item.pool].label} · ${item.time} · ${item.money}`;
+        copy.append(title,meta);
+        const remove=document.createElement('button'); remove.className='delete-item'; remove.type='button'; remove.textContent='删除';
+        remove.addEventListener('click',()=>{ customData=customData.filter(x=>x.id!==item.id); persistCustom(); renderCustomOptions(); });
+        row.append(copy,remove); root.append(row);
+      });
+    }
+    document.getElementById('openManager').addEventListener('click',()=>showManager(true));
+    document.getElementById('backHome').addEventListener('click',()=>showManager(false));
+    document.getElementById('optionForm').addEventListener('submit',event=>{
+      event.preventDefault();
+      const item={id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,pool:document.getElementById('optionPool').value,name:document.getElementById('optionName').value.trim(),desc:document.getElementById('optionDesc').value.trim(),time:document.getElementById('optionTime').value.trim(),money:document.getElementById('optionMoney').value.trim(),effect:document.getElementById('optionEffect').value.trim()};
+      if(!item.name||!item.desc||!item.time||!item.money||!item.effect) return;
+      customData.push(item); persistCustom(); renderCustomOptions();
+      event.target.reset();
+      document.getElementById('formToast').textContent='已保存，这个选项会出现在对应档位的抽取里。';
+      window.setTimeout(()=>document.getElementById('formToast').textContent='',2600);
+    });
+    setPool(currentPool);
+  </script>
+</body>
+</html>
